@@ -5,15 +5,21 @@ import java.net.Socket;
 
 public class Connexion extends Thread{
     private Socket socket;
-    private PrintWriter writer;
-    private BufferedReader reader;
+    private PrintWriter writer; //
+    private BufferedReader reader; 
     //private Nettoyeur clean;
 
     // question 16, important le synchronized pour accéder à une ressource commune
     private synchronized void envoyerMessage(String message) throws IOException {
         writer.println(message);
+        writer.flush(); // forcer ecriture
+    }
+
+    private synchronized void envoyerMessageObjet(Object message) throws IOException {
+        writer.println(message);
         writer.flush();
     }
+
 
     @Override
     public void run() {

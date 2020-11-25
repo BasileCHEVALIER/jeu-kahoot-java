@@ -14,6 +14,7 @@ public class ApplicationClient extends JDialog {
     private JButton envoyerButton;
     private JButton quitterButton;
     private JTextField textField1;
+    private JTextArea areaDisplayObject; // ajout d'un champ texte pour tester l'affichage d'un objet
     private Socket client;
     private PrintWriter writer;
 
@@ -35,6 +36,7 @@ public class ApplicationClient extends JDialog {
 
         String nom=textField1.getText();
         String mess=textField2.getText();
+
         writer.println(nom + " : " + mess);
         writer.flush(); // Permet de vider le buffer
 
@@ -60,6 +62,20 @@ public class ApplicationClient extends JDialog {
                 }
             }
         });
+
+    /*
+        quitterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                    dispose();
+
+            }
+        });
+    */
+
+
+
     }
 
 

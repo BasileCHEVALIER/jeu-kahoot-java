@@ -5,8 +5,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 public class Ecouteur extends Thread {
+
     private JTextArea textArea;
     private BufferedReader bufferReader;
+    private JTextArea
+
 
 
     // question 20, ajoutez une classe Ecouteur
@@ -19,7 +22,6 @@ public class Ecouteur extends Thread {
         this.textArea = textArea;
         this.bufferReader = bufferReader;
 
-
     }
 
     @Override
@@ -30,6 +32,7 @@ public class Ecouteur extends Thread {
                     String line = bufferReader.readLine();
                     if(line!=null){
                         textArea.append(line+'\n');
+                        System.out.println("run :"+line);
                     }
                 }
             } catch (IOException e) {

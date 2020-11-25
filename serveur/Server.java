@@ -45,6 +45,7 @@ public class Server extends Thread {
                     this.connexions.add(c); // ajout à la collection
                     c.start(); // question 18, démarer le thread Connexions après l'ajout à la collection
                     System.out.println(this.connexions.size());
+
                 } catch (IOException e) {
                     interrupt();
                     e.printStackTrace();
