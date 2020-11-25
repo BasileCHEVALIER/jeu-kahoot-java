@@ -8,8 +8,7 @@ public class Ecouteur extends Thread {
 
     private JTextArea textArea;
     private BufferedReader bufferReader;
-    private JTextArea
-
+    private JTextArea textAreaObject;
 
 
     // question 20, ajoutez une classe Ecouteur
@@ -21,6 +20,7 @@ public class Ecouteur extends Thread {
         // pourquoi pas faire la même chose avec des objets
         this.textArea = textArea;
         this.bufferReader = bufferReader;
+        //this.textAreaObject = textAreaObject;
 
     }
 

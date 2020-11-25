@@ -52,6 +52,8 @@ public class ApplicationClient extends JDialog {
         Ecouteur ecouteur = new Ecouteur(textArea1,new BufferedReader(new InputStreamReader(client.getInputStream())));
         ecouteur.start();
 
+        // creation d'un second écouteur
+
         envoyerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -77,8 +79,6 @@ public class ApplicationClient extends JDialog {
 
 
     }
-
-
 
 
     public static void main(String[] args) throws IOException {
