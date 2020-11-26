@@ -1,4 +1,4 @@
-package bdd;
+package gestionBdd;
 
 
 import java.io.FileNotFoundException;

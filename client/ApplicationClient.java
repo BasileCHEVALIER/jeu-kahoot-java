@@ -1,5 +1,8 @@
 package client;
 
+import com.mysql.cj.protocol.Message;
+import test.Data;
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
@@ -18,6 +21,7 @@ public class ApplicationClient extends JDialog {
     private Socket client;
     private PrintWriter writer;
 
+    private ObjectOutputStream out;
 
     // question 14
     @Override
@@ -35,15 +39,18 @@ public class ApplicationClient extends JDialog {
     private void onEnvoyer() throws IOException {
 
         String nom=textField1.getText();
-        String mess=textField2.getText();
+        String reponse=textField2.getText();
 
-        writer.println(nom + " : " + mess);
-        writer.flush(); // Permet de vider le buffer
+        Data message = new Data(nom,reponse);
+
+        out.writeObject(message);
+        out.flush(); // Permet de vider le buffer
 
     }
 
     public ApplicationClient() throws IOException {
         this.client=new Socket("127.0.0.1",4242);
+
         this.writer=new PrintWriter(new OutputStreamWriter(this.client.getOutputStream()));
         setContentPane(contentPane);
         setModal(true);
@@ -64,19 +71,6 @@ public class ApplicationClient extends JDialog {
                 }
             }
         });
-
-    /*
-        quitterButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                    dispose();
-
-            }
-        });
-    */
-
-
 
     }
 

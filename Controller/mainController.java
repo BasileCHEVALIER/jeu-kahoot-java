@@ -1,11 +1,10 @@
 package Controller;
-import bdd.RequeteKahoot;
+import gestionBdd.RequeteKahoot;
 import serveur.*;
 import client.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 public class mainController {
 
