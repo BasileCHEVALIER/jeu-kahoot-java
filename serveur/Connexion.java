@@ -1,84 +1,122 @@
 package serveur;
 
-import test.Data;
+import client.Message;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 public class Connexion extends Thread{
 
-    private Socket socket;
-    private ObjectInputStream writer;
-    private ObjectOutputStream reader;
+    Socket socket;
 
-    //private PrintWriter writer;
-    //private BufferedReader reader;
-    //private Nettoyeur clean;
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos ;
 
-
-    // question 16, important le synchronized pour accéder à une ressource commune
-    private synchronized void envoyerMessage(Data message) throws IOException {
-
-        //writer.println(message);
-        //writer.flush(); // forcer ecriture
-
-        try {
-            writer.readObject();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-       // writer.flush();
-
+    public ObjectInputStream getOis() {
+        return ois;
     }
+
+    public ObjectOutputStream getOos() {
+        return oos;
+    }
+
+    private String iD;
 
 
 
     @Override
     public void run() {
-
+        while (true){
             try {
-                while(true) {
+                Object line = ois.readObject();
+                if (line!=null) {
 
-                    //String message = reader.readLine();
-                    //Data message = new Data()
-                    // message = reader.defaultWriteObject();
+                    distriuberMessage(line);
+                    System.out.println("RUN SERVER ");
 
-                    Data message;
+                    // Cast de notre objet
+                    Message message = (Message)line;
 
-                    if (message != null)
-                        for (Connexion client : Server.getConnexions()) {
-                            client.envoyerMessage(message);
-                            System.out.println(message);
-                        }
+                    System.out.println(message.getMessage());
+                    System.out.println(message.getTypeMessage());
+
+
+                    // Traitement du le serveur a faire ici
+                    if(message.getEtape()==2){
+                        System.out.println("egale 2 ");
+
+                    }
+
+
+                    if(message.getTypeMessage().equals("INSCRIPTION")){
+                        System.out.println("okk");
+                        // Envoyer un message de réponse
+
+                    }
+
+
+
+
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
-                for(Connexion client:Server.getConnexions()){
-                    try {
-                        client.socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    private  synchronized void distriuberMessage(Object message){
+        synchronized (Serveur.getListConnexion()){
+            List<Connexion> liste  =Serveur.getListConnexion();
+            for (Connexion con:liste) {
+                try {
+                    con.getOos().writeObject(message);
+                    con.getOos().flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
 
+    }
 
-
-    // question 8
-    public Connexion(Socket socket) throws IOException {
-
-        this.socket = socket;
-
-        //this.writer=new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-        //this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-        this.writer = new ObjectInputStream(this.socket.getInputStream());
-        this.reader = new ObjectOutputStream(this.socket.getOutputStream());
+    private  synchronized void distriuberMessageOneClient(Object message){
+                try {
+                    this.getOos().writeObject(message);
+                    this.getOos().flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
     }
 
 
+
+
+    public Connexion(Socket socket) throws IOException {
+        this.socket=socket;
+        OutputStream output = socket.getOutputStream();
+        oos = new ObjectOutputStream(output);
+        InputStream is = socket.getInputStream();
+        ois = new ObjectInputStream(is);
+
+        // Montrer aux autres qui se connecte à la partie
+        distriuberMessage(new client.Message("Serveur","--Nouvelle personne--"));
+
+    }
+
+
+
+    public void close(){
+        try {
+            ois.close();
+            oos.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

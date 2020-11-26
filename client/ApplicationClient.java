@@ -1,81 +1,159 @@
 package client;
 
-import com.mysql.cj.protocol.Message;
-import test.Data;
-
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
 
 public class ApplicationClient extends JDialog {
-
-    // question 12 les attributs pour l'interface graphique
+    private static final String host = "localhost";
+    private static final int port = 60000;
     private JPanel contentPane;
-    private JTextArea textArea1;
-    private JTextField textField2;
-    private JButton envoyerButton;
-    private JButton quitterButton;
-    private JTextField textField1;
-    private JTextArea areaDisplayObject; // ajout d'un champ texte pour tester l'affichage d'un objet
-    private Socket client;
-    private PrintWriter writer;
+    private JButton buttonEnvoie;
+    private JTextArea zoneMessage;
+    private JTextField name;
+    private JTextField saisieTexte;
+    private JButton bButton;
+    private JButton aButton;
+    private JButton cButton;
+    private JButton dButton;
+    private JButton inscriptionButton;
+    private Connexion connexion;
+    private Ecouteur ecouteur;
 
-    private ObjectOutputStream out;
+    public ApplicationClient() {
 
-    // question 14
-    @Override
-    public void dispose() {
         try {
-            this.client.close(); // fermeture de la fenêtre proprement
+            connexion=new Connexion(new Socket(host, port));
         } catch (IOException e) {
-            super.dispose();
             e.printStackTrace();
         }
-        super.dispose();
-    }
 
-
-    private void onEnvoyer() throws IOException {
-
-        String nom=textField1.getText();
-        String reponse=textField2.getText();
-
-        Data message = new Data(nom,reponse);
-
-        out.writeObject(message);
-        out.flush(); // Permet de vider le buffer
-
-    }
-
-    public ApplicationClient() throws IOException {
-        this.client=new Socket("127.0.0.1",4242);
-
-        this.writer=new PrintWriter(new OutputStreamWriter(this.client.getOutputStream()));
-        setContentPane(contentPane);
-        setModal(true);
-
-        // question 21 démarer et initialiser l'écouteur
-        Ecouteur ecouteur = new Ecouteur(textArea1,new BufferedReader(new InputStreamReader(client.getInputStream())));
+        ecouteur = new Ecouteur(zoneMessage,connexion);
         ecouteur.start();
 
-        // creation d'un second écouteur
+        setContentPane(contentPane);
+        setModal(true);
+        getRootPane().setDefaultButton(buttonEnvoie);
 
-        envoyerButton.addActionListener(new ActionListener() {
-            @Override
+        buttonEnvoie.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    onEnvoyer();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+                onEnvoie();
             }
         });
 
+        /* Les boutons supplementaires */
+
+        // Fonction pour envoyer la réponse a comme réponse
+        aButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        // Fonction pour envoyer la réponse b comme réponse
+        bButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+
+        // Fonction pour s'inscrire à la partie
+        // ok
+        inscriptionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                inscription();
+            }
+        });
+
+
+        // call onCancel() when cross is clicked
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                onCancel();
+            }
+        });
+
+        // call onCancel() on ESCAPE
+        contentPane.registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+
+
     }
 
 
-    public static void main(String[] args) throws IOException {
+
+    /*
+    * Function : private void inscription()
+    * When user clic on Insciption this fonction send object message to the server
+    * with message INSCRIPTION.
+    *
+    * parameters required :
+    * Login type String
+    *
+    * Warning :
+    * If you login is null. No connexion !!
+    * */
+    private void inscription() {
+        String login = name.getText();
+
+        if (login.isEmpty()) {
+            zoneMessage.setText("MERCI DE S'INSCRIRE AVEC UN NOM NON NULLE \n");
+        } else {
+            try {
+                connexion.getOos().writeObject(new Message(login,login,"INSCRIPTION"));
+                connexion.getOos().flush();
+
+                // Rendre invisible la zone inscription à remettre par la suite
+                //inscriptionButton.setVisible(false);
+                //saisieTexte.setVisible(false);
+                //name.setVisible(false);
+
+                System.out.println("Client send inscription ");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    private void onEnvoie(){
+        String nom=name.getText();
+        String line=saisieTexte.getText();
+        try {
+            connexion.getOos().writeObject(new Message(nom,line));
+            connexion.getOos().flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        saisieTexte.setText("");
+    }
+
+
+
+    private void onCancel() {
+        // add your code here if necessary
+        dispose();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (connexion!=null)
+        {
+            ecouteur.interrupt();
+            connexion.close();
+        }
+    }
+
+    public static void main(String[] args) {
         ApplicationClient dialog = new ApplicationClient();
         dialog.pack();
         dialog.setVisible(true);

@@ -14,16 +14,11 @@ public class mainController {
         RequeteKahoot requeteKahoot = new RequeteKahoot();
 
         // Demarage du serveur
-        Server serv = new Server();
+        Serveur serv = new Serveur();
         serv.start();
 
-        // Demarage du client
-        ApplicationClient dialog = new ApplicationClient();
-        dialog.pack();
-        dialog.setVisible(true);
 
-        // exit du main
-        System.exit(0);
+
 
     }
 

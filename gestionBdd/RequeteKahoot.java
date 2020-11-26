@@ -1,6 +1,8 @@
 package gestionBdd;
 
 
+import data.Joueur;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,11 +17,13 @@ public class RequeteKahoot {
     private static String user = "gautier";
     private static String mdp = "26102000";
 
-
     public RequeteKahoot() throws SQLException {
         connect = DriverManager.getConnection(url, user, mdp);
 
     }
+
+
+
 
 
 /*
@@ -59,6 +63,9 @@ public class RequeteKahoot {
         //return categories;
         return nombreJoueurs;
     }
+
+
+
    /*
     public Categorie getCategorie(Categorie categorie) throws SQLException {
         String requete = "SELECT idCategorie FROM categorie WHERE texteCategorie = ?";
@@ -98,14 +105,12 @@ public class RequeteKahoot {
         pstmt.close();
         return joueur;
 
-    }
-
+    }*/
     public int addJoueur(Joueur joueur) throws SQLException {
         try {
-            String requete = "INSERT INTO joueur (login,mdp) VALUES (?,?)";
+            String requete = "INSERT INTO joueur (login) VALUES (?)";
             PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, joueur.getLogin());
-            pstmt.setString(2, joueur.getMdp());
             pstmt.executeUpdate();
             ResultSet res = pstmt.getGeneratedKeys();
             int id = 0;
@@ -129,6 +134,7 @@ public class RequeteKahoot {
         return -1;
     }
 
+    /*
     public int addCategorie(Categorie categorie) {
         try {
             String requete = "INSERT INTO categorie (texteCATEGORIE) VALUES (?)";
