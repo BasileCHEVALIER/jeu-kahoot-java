@@ -63,7 +63,7 @@ public class Serveur extends Thread{
 
                     if(listConnexion.size()==2){
                         System.out.println("La partie va commencer il y a 2 personnes sur le serveur");
-                        con.startGame();
+                        con.sendMessageStartGame();
                     }else if(listConnexion.size()<2){
                         System.out.println("Le serveur est pas complet !!! ");
 

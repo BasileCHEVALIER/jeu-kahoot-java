@@ -15,6 +15,7 @@ public class Connexion extends Thread {
     private ObjectInputStream ois;
     private ObjectOutputStream oos ;
     private int iD;
+    private String user;
 
     public ObjectInputStream getOis() {
         return ois;
@@ -23,6 +24,9 @@ public class Connexion extends Thread {
         return oos;
     }
 
+    public void setUser(String user) {
+        this.user = user;
+    }
 
     @Override
     public void run() {
@@ -43,12 +47,27 @@ public class Connexion extends Thread {
                     // Lister les connexions
                     listerLesConnexions();
 
-                    if(message.getTypeMessage().compareTo("INSCRIPTION")==0){
 
-                        // Envoyer un message de réponse à l'utilisateur si son idantifiant est déjà utilisé
+                    /*
+                     * Part : Inscription
+                     * RequeteKahoot allows connection with database
+                     * addJoueur insert informations in database
+                     * addJoueur return idJoueur
+                     *
+                     * parameters required :
+                     * login type String ==> expediteur
+                     * password type String ==> message
+                     *
+                     *
+                     * Warning :
+                     * If you login is already used. Server send you a message  !!
+                     * idJoueur woth -1 in that case !
+                     * */
+                    if(message.getTypeMessage().compareTo("INSCRIPTION")==0){
                         try {
                             RequeteKahoot requeteKahoot = new RequeteKahoot();
-                            int idJoueur = requeteKahoot.addJoueur(message.getExpediteur());
+                            // Warning specific
+                            int idJoueur = requeteKahoot.addJoueur(message.getExpediteur(),message.getMessage());
                             System.out.println("ID du nouveau joueur "+idJoueur);
 
                             if(idJoueur==-1){
@@ -58,12 +77,52 @@ public class Connexion extends Thread {
                                 Message messageRetour = new Message("server","Ton pseudo est bon","VALID");
                                 this.oos.writeObject(messageRetour);
                             }
-
                         } catch (SQLException throwables) {
                             throwables.printStackTrace();
                         }
 
                     }
+
+                    /*
+                     * Part : Se connecter
+                     * RequeteKahoot allows connection with database
+                     * seConnecter check informations in database if user have an account
+                     * seConnecter return idJoueur
+                     *
+                     * parameters required :
+                     * login type String ==> expediteur
+                     * password type String ==> message
+                     *
+                     * Warning :
+                     * If you login or password are false. Server send you a message  !!
+                     * idJoueur woth -1 in that case !
+                     * */
+                    if(message.getTypeMessage().compareTo("SECONNECTER")==0){
+                        try {
+                            RequeteKahoot requeteKahoot = new RequeteKahoot();
+                            // Warning specific
+                            int idJoueur = requeteKahoot.seConnecter(message.getExpediteur(),message.getMessage());
+                            System.out.println("ID du nouveau joueur "+idJoueur);
+
+                            if(idJoueur==-1){
+                                Message messageRetour = new Message("server","Ton pseudo ou mdp n'est pas bon ","ERROR");
+                                this.oos.writeObject(messageRetour);
+                            }else{
+                                Message messageRetour = new Message("server","Tu es connecté","VALID");
+                                this.oos.writeObject(messageRetour);
+                            }
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
+
+                    }
+
+
+
+
+
+
+
 /*
                     if(message.getTypeMessage().equals("REPONSE")){
                         System.out.println("reponse ok : "+message.getMessage());
@@ -83,7 +142,7 @@ public class Connexion extends Thread {
 
 
 
-    public  synchronized void startGame(){
+    public  synchronized void sendMessageStartGame(){
         Message message = new Message("SERVER","Nous allons commencer la partie","startGame");
         synchronized (Serveur.getListConnexion()){
             List<Connexion> liste  =Serveur.getListConnexion();

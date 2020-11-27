@@ -104,11 +104,13 @@ public class RequeteKahoot {
         return joueur;
 
     }*/
-    public int addJoueur(String joueur) throws SQLException {
+    public int addJoueur(String login,String mdp) throws SQLException {
         try {
-            String requete = "INSERT INTO joueur (login) VALUES (?)";
+            String requete = "INSERT INTO joueur (login,mdp) VALUES (?,?)";
             PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, joueur);
+            pstmt.setString(1, login);
+            pstmt.setString(2, mdp);
+
             pstmt.executeUpdate();
             ResultSet res = pstmt.getGeneratedKeys();
             int id = 0;
@@ -127,6 +129,36 @@ public class RequeteKahoot {
             //Handle errors for Class.forName
             e.printStackTrace();
 
+        }
+        return -1;
+    }
+
+
+
+
+    public int seConnecter(String login,String mdp) throws SQLException {
+        try {
+            String requete = "select idJOUEUR from joueur WHERE login like ? and mdp like ?;";
+            PreparedStatement pstmt = connect.prepareStatement(requete);
+            pstmt.setString(1, login);
+            pstmt.setString(2, mdp);
+
+            ResultSet res = pstmt.executeQuery();
+            int id = -1;
+            if (res.next()) {
+                id = res.getInt(1);
+
+            }
+            res.close();
+            pstmt.close();
+            return id;
+
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
 
         }
         return -1;

@@ -18,6 +18,8 @@ public class ApplicationClient extends JDialog {
     private JButton cButton;
     private JButton dButton;
     private JButton inscriptionButton;
+    private JButton connexionButton;
+    private JButton quitterButton;
     private Connexion connexion;
     private Ecouteur ecouteur;
 
@@ -44,29 +46,36 @@ public class ApplicationClient extends JDialog {
 
         /* Les boutons supplementaires */
 
-        // Fonction pour envoyer la réponse a comme réponse
         aButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testOnEnvoie();
             }
         });
 
-        // Fonction pour envoyer la réponse b comme réponse
         bButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
             }
         });
 
-
-        // Fonction pour s'inscrire à la partie
-        // ok
         inscriptionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 inscription();
             }
         });
 
+        connexionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                seConnecter();
+            }
+        });
+
+
+        quitterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        });
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -82,8 +91,6 @@ public class ApplicationClient extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-
 
     }
 
@@ -102,12 +109,53 @@ public class ApplicationClient extends JDialog {
     * */
     private void inscription() {
         String login = name.getText();
+        String mdp = saisieTexte.getText();
 
-        if (login.isEmpty()) {
-            zoneMessage.setText("MERCI DE S'INSCRIRE AVEC UN NOM NON NULLE \n");
+        if (login.isEmpty() ){
+            zoneMessage.setText("MERCI DE S'INSCRIRE AVEC UN NOM NON NUL \n");
+        }else if(mdp.isEmpty()){
+            zoneMessage.setText("MERCI DE S'INSCRIRE AVEC UN MDP NON NUL \n");
         } else {
             try {
-                connexion.getOos().writeObject(new Message(login,login,"INSCRIPTION"));
+                connexion.getOos().writeObject(new Message(login,mdp,"INSCRIPTION"));
+                connexion.getOos().flush();
+
+                // Rendre invisible la zone inscription à remettre par la suite
+                //inscriptionButton.setVisible(false);
+                //saisieTexte.setVisible(false);
+                //name.setVisible(false);
+
+                System.out.println("Client send inscription ");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    /*
+     * Function : private void seConnecter()
+     * When user clic on Connexion this fonction send object message to the server
+     * with message SECONNECTER.
+     *
+     * parameters required :
+     * Login type String
+     *
+     * Warning :
+     * If you login is null. No connexion !!
+     * */
+    private void seConnecter() {
+        String login = name.getText();
+        String mdp = saisieTexte.getText();
+
+        if (login.isEmpty() ){
+            zoneMessage.setText("MERCI DE S'INSCRIRE AVEC UN NOM NON NUL \n");
+        }else if(mdp.isEmpty()){
+            zoneMessage.setText("MERCI DE S'INSCRIRE AVEC UN MDP NON NUL \n");
+        } else {
+            try {
+                connexion.getOos().writeObject(new Message(login,mdp,"SECONNECTER"));
                 connexion.getOos().flush();
 
                 // Rendre invisible la zone inscription à remettre par la suite
@@ -163,6 +211,7 @@ public class ApplicationClient extends JDialog {
         super.dispose();
         if (connexion!=null)
         {
+            System.out.println("DISPOSE");
             ecouteur.interrupt();
             connexion.close();
         }
