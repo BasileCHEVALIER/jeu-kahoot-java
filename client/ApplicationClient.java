@@ -47,7 +47,7 @@ public class ApplicationClient extends JDialog {
         // Fonction pour envoyer la réponse a comme réponse
         aButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                testOnEnvoie();
             }
         });
 
@@ -125,10 +125,10 @@ public class ApplicationClient extends JDialog {
 
 
     private void onEnvoie(){
-        String nom=name.getText();
-        String line=saisieTexte.getText();
+        String login=name.getText();
+        String message=saisieTexte.getText();
         try {
-            connexion.getOos().writeObject(new Message(nom,line));
+            connexion.getOos().writeObject(new Message(login,message,"ENVOYER"));
             connexion.getOos().flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -136,6 +136,21 @@ public class ApplicationClient extends JDialog {
         saisieTexte.setText("");
     }
 
+
+    private void testOnEnvoie(){
+        String login=name.getText();
+        String textMessage=saisieTexte.getText();
+
+        try {
+            // Message(String expediteur, String message, String typeMessage)
+            connexion.getOos().writeObject(new Message(login,"A","REPONSE"));
+            connexion.getOos().flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        zoneMessage.setText("");
+        zoneMessage.setText("Envoi de la réponse a ");
+    }
 
 
     private void onCancel() {

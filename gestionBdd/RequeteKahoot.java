@@ -1,8 +1,6 @@
 package gestionBdd;
 
 
-import data.Joueur;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -106,11 +104,11 @@ public class RequeteKahoot {
         return joueur;
 
     }*/
-    public int addJoueur(Joueur joueur) throws SQLException {
+    public int addJoueur(String joueur) throws SQLException {
         try {
             String requete = "INSERT INTO joueur (login) VALUES (?)";
             PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, joueur.getLogin());
+            pstmt.setString(1, joueur);
             pstmt.executeUpdate();
             ResultSet res = pstmt.getGeneratedKeys();
             int id = 0;

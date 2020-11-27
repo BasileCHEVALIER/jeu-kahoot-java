@@ -6,18 +6,15 @@ import java.net.Socket;
 public class Connexion {
 
     Socket socket;
-
     private ObjectInputStream ois;
     private ObjectOutputStream oos ;
-
-    private String iD;
-
 
     public Connexion(Socket socket) throws IOException {
 
         this.socket=socket;
         ois = new ObjectInputStream(socket.getInputStream());
         oos = new ObjectOutputStream(socket.getOutputStream());
+
     }
 
     public ObjectInputStream getOis() {
