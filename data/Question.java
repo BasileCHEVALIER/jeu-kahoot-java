@@ -9,6 +9,18 @@ public class Question {
     private Reponse bonneReponse;
     private String laQuestion;
     private int idQuestion;
+    private Categorie categorie;
+
+
+    public Question(Categorie categorie, Reponse bonneReponse, String texteOption) {
+        this.categorie = categorie;
+        this.bonneReponse = bonneReponse;
+        this.laQuestion = texteOption;
+    }
+
+    public Question(String texteOption) {
+        this.laQuestion = texteOption;
+    }
 
     public List getLesPropositions() {
         return lesPropositions;
@@ -40,6 +52,18 @@ public class Question {
 
     public void setIdQuestion(int idQuestion) {
         this.idQuestion = idQuestion;
+    }
+
+    public Categorie getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(Categorie categorie) {
+        this.categorie = categorie;
+    }
+
+    public void addProposition (Reponse rep){
+        lesPropositions.add(rep);
     }
 
     @Override

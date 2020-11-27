@@ -5,6 +5,10 @@ public class Reponse {
     private String texteReponse;
     private int idReponse;
 
+    public Reponse(String texteReponse) {
+        this.texteReponse = texteReponse;
+    }
+
     public String getTexteReponse() {
         return texteReponse;
     }
