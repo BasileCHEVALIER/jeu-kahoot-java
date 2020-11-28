@@ -104,6 +104,8 @@ public class RequeteKahoot {
         return joueur;
 
     }*/
+
+
     public int addJoueur(String login,String mdp) throws SQLException {
         try {
             String requete = "INSERT INTO joueur (login,mdp) VALUES (?,?)";
@@ -133,9 +135,6 @@ public class RequeteKahoot {
         return -1;
     }
 
-
-
-
     public int seConnecter(String login,String mdp) throws SQLException {
         try {
             String requete = "select idJOUEUR from joueur WHERE login like ? and mdp like ?;";
@@ -163,6 +162,62 @@ public class RequeteKahoot {
         }
         return -1;
     }
+
+
+
+    public int creationNouvellePartie() throws SQLException {
+        try {
+            String requete = "INSERT INTO `partie` (`ID_PARTIE`) VALUES (NULL); ";
+            PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
+            pstmt.executeUpdate();
+            ResultSet res = pstmt.getGeneratedKeys();
+            int id = 0;
+            if (res.next()) {
+                id = res.getInt(1);
+
+            }
+            res.close();
+            pstmt.close();
+            return id;
+
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+        return -1;
+    }
+
+
+    public int addJoueurHasAParie(int idJoueur,int idPartie) throws SQLException {
+        try {
+            String requete = "INSERT INTO `partie_has_joueur`(`ID_PARTI`, `ID_JOUEUR`, `score_partie`) VALUES (?,?,0) ";
+            PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(2,idJoueur);
+            pstmt.setInt(1, idPartie);
+
+            pstmt.executeUpdate();
+            ResultSet res = pstmt.getGeneratedKeys();
+            int id = 0;
+            res.close();
+            pstmt.close();
+            return id;
+
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+        return -1;
+    }
+
+
 
     /*
     public int addCategorie(Categorie categorie) {

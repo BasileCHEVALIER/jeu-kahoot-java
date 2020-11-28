@@ -9,10 +9,28 @@ public class Ecouteur extends Thread {
     private JTextArea zoneMessage;
     private Connexion connexion;
 
-    public Ecouteur(JTextArea zoneMessage,Connexion connexion) {
+
+    // Ajout des variables suivantes pour les
+    private JButton inscriptionButton;
+    private JButton connexionButton;
+    private JTextField name;
+    private JTextField saisieTexte;
+
+
+    public Ecouteur(JTextArea zoneMessage,Connexion connexion,JButton inscriptionButton, JButton connexionButton,JTextField name,JTextField saisieTexte) {
         this.zoneMessage = zoneMessage;
         this.connexion = connexion;
+
+        // Les nouveaux champs
+        this.inscriptionButton = inscriptionButton;
+        this.connexionButton = connexionButton;
+        this.name=name;
+        this.saisieTexte=saisieTexte;
+
+
     }
+
+
 
     @Override
     public void run() {
@@ -28,31 +46,42 @@ public class Ecouteur extends Thread {
                     System.out.println("MESSAGE : "+msg.getMessage());
                     System.out.println("EXPEDITEUR : "+msg.getExpediteur());
 
-                    // Methode rudimentaire pour presenter
-                    // On va definir plusieurs étapes !
-                    // 1 => Présentation du fonctionnemnt du Kahoot
-                    // 2 =>
-/*
-                    if(msg.getMessage().equals("INSCRIPTION")){
-                        zoneMessage.setText("Hello tu es inscris  ");
-                        System.out.println("Ecouteur : etape 1 ");
-                    }
-*/
+
                     if(msg.getTypeMessage()==("startGame")){
                         zoneMessage.setText(msg.getMessage());
-
-
-
-
-
-
-
                     }
 
                     if(msg.getTypeMessage()==("FULLSERVER")){
                         // Bloquer les boutons
                         // Pour emepeche l'utilisateur de faire une nouvelle requete
+
                     }
+
+                    // Faire disparaitre l'interface de connexion
+                    if(msg.getTypeMessage().compareTo("INSCRIPTION_PARTIE_GOOD")==0){
+                        System.out.println("inx");
+                        inscriptionButton.setVisible(false);;
+                        connexionButton.setVisible(false);
+                        name.setVisible(false);
+                        saisieTexte.setVisible(false);
+
+                    }
+
+
+
+                    /*
+                    TO DO....
+                    if(msg.getTypeMessage()==("QUITTER")){
+                        // Bloquer les boutons
+                        // Pour emepeche l'utilisateur de faire une nouvelle requete
+                        System.out.println("quiter");
+                        this.connexion.close();
+
+                        this.interrupt();
+                    }
+                    */
+
+
 
 
                 }

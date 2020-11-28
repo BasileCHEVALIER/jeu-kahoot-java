@@ -17,12 +17,22 @@ public class Serveur extends Thread{
     private ServerSocket serverSocket;
     private static List<Connexion> listConnexion;
 
+    // En fonction de la gestion de l'architecture
+    private RequeteKahoot requeteKahoot ;
+    private int idPartie;
+
 
     public Serveur() throws IOException, SQLException {
         this.serverSocket = new ServerSocket(port);
         listConnexion = new ArrayList<>();
+        this.requeteKahoot = new RequeteKahoot();
+
+        this.idPartie=requeteKahoot.creationNouvellePartie();
+        System.out.println("idPartie"+this.idPartie);
 
     }
+
+
 
     private void fermerSocketEcoute(){
         try {
@@ -32,6 +42,10 @@ public class Serveur extends Thread{
             e.printStackTrace();
         }
     }
+    public static void  ajouterUnInscris(){
+
+    }
+
 
     public static synchronized List<Connexion> getListConnexion() {
         return listConnexion;
@@ -47,12 +61,12 @@ public class Serveur extends Thread{
                 * Creation d'un nouveau thread pour le nouveau client
                 * Lance l'excution du thread
                 * */
-                Connexion con = new Connexion(serverSocket.accept());
+                Connexion con = new Connexion(serverSocket.accept(),this.idPartie);
                 synchronized(listConnexion) {
+
                     listConnexion.add(con);
                     con.start();
                     con.toString();
-
 
                     // Limiter le nombre de joueur par exemple
                     // Si le nombre de joueur est de 3 alors on lance la partie
@@ -63,17 +77,15 @@ public class Serveur extends Thread{
 
                     if(listConnexion.size()==2){
                         System.out.println("La partie va commencer il y a 2 personnes sur le serveur");
-                        con.sendMessageStartGame();
+                        //con.sendMessageStartGame();
                     }else if(listConnexion.size()<2){
                         System.out.println("Le serveur est pas complet !!! ");
 
                     }else{
                         System.out.println("Le serveur est complet !!!");
                         Message message = new Message("SERVER","Nous sommes complet !!!","FULLSERVER");
-                        con.distriuberMessagePourUnClient(message);
+                        //con.distriuberMessagePourUnClient(message);
                     }
-
-
                 }
 
             }

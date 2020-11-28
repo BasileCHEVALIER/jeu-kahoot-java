@@ -1,9 +1,12 @@
 package client;
 
+import data.Question;
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 public class ApplicationClient extends JDialog {
     private static final String host = "localhost";
@@ -22,6 +25,8 @@ public class ApplicationClient extends JDialog {
     private JButton quitterButton;
     private Connexion connexion;
     private Ecouteur ecouteur;
+    private Question laQuestion;
+
 
     public ApplicationClient() {
 
@@ -31,7 +36,7 @@ public class ApplicationClient extends JDialog {
             e.printStackTrace();
         }
 
-        ecouteur = new Ecouteur(zoneMessage,connexion);
+        ecouteur = new Ecouteur(zoneMessage,connexion,inscriptionButton,connexionButton,name,saisieTexte);
         ecouteur.start();
 
         setContentPane(contentPane);
@@ -73,7 +78,11 @@ public class ApplicationClient extends JDialog {
 
         quitterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                connexion.close();
+                //ecouteur.join(10);
+                ecouteur.interrupt();
                 onCancel();
+
             }
         });
 
@@ -93,8 +102,6 @@ public class ApplicationClient extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
     }
-
-
 
     /*
     * Function : private void inscription()
@@ -157,11 +164,6 @@ public class ApplicationClient extends JDialog {
             try {
                 connexion.getOos().writeObject(new Message(login,mdp,"SECONNECTER"));
                 connexion.getOos().flush();
-
-                // Rendre invisible la zone inscription à remettre par la suite
-                //inscriptionButton.setVisible(false);
-                //saisieTexte.setVisible(false);
-                //name.setVisible(false);
 
                 System.out.println("Client send inscription ");
             } catch (IOException e) {

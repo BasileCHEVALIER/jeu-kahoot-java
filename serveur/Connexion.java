@@ -14,18 +14,14 @@ public class Connexion extends Thread {
     Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos ;
-    private int iD;
-    private String user;
+    private int idPartie;
+    private int iD; // ID de la connexion
 
     public ObjectInputStream getOis() {
         return ois;
     }
     public ObjectOutputStream getOos() {
         return oos;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
     }
 
     @Override
@@ -62,6 +58,11 @@ public class Connexion extends Thread {
                      * Warning :
                      * If you login is already used. Server send you a message  !!
                      * idJoueur woth -1 in that case !
+                     *
+
+                     * Add check retourAddJoueurHasAParie if we have 0 all is good
+                     * but if we have -1 add joueur isn't good
+                     *
                      * */
                     if(message.getTypeMessage().compareTo("INSCRIPTION")==0){
                         try {
@@ -74,13 +75,14 @@ public class Connexion extends Thread {
                                 Message messageRetour = new Message("server","Ton pseudo est déjà utilisé","ERROR");
                                 this.oos.writeObject(messageRetour);
                             }else{
-                                Message messageRetour = new Message("server","Ton pseudo est bon","VALID");
+                                // ADD user in table partie_has_joueur
+                                int retourAddJoueurHasAParie =requeteKahoot.addJoueurHasAParie(idJoueur,idPartie);
+                                Message messageRetour = new Message("server","Tu es inscris au site pour une partie","INSCRIPTION_PARTIE_GOOD");
                                 this.oos.writeObject(messageRetour);
                             }
                         } catch (SQLException throwables) {
                             throwables.printStackTrace();
                         }
-
                     }
 
                     /*
@@ -108,7 +110,8 @@ public class Connexion extends Thread {
                                 Message messageRetour = new Message("server","Ton pseudo ou mdp n'est pas bon ","ERROR");
                                 this.oos.writeObject(messageRetour);
                             }else{
-                                Message messageRetour = new Message("server","Tu es connecté","VALID");
+                                int retourAddJoueurHasAParie =requeteKahoot.addJoueurHasAParie(idJoueur,idPartie);
+                                Message messageRetour = new Message("server","Tu es connecté","INSCRIPTION_PARTIE_GOOD");
                                 this.oos.writeObject(messageRetour);
                             }
                         } catch (SQLException throwables) {
@@ -120,15 +123,6 @@ public class Connexion extends Thread {
 
 
 
-
-
-
-/*
-                    if(message.getTypeMessage().equals("REPONSE")){
-                        System.out.println("reponse ok : "+message.getMessage());
-                        // Envoyer un message de réponse
-                    }
-*/
 
                 }
 
@@ -195,9 +189,10 @@ public class Connexion extends Thread {
     }
 
 
-    public Connexion(Socket socket) throws IOException {
+    public Connexion(Socket socket,int idPartie) throws IOException {
 
         this.socket=socket;
+        this.idPartie=idPartie;
         OutputStream output = socket.getOutputStream();
         oos = new ObjectOutputStream(output);
         InputStream is = socket.getInputStream();
