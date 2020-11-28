@@ -2,44 +2,32 @@ package serveur;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class Service extends testThread{
+import static serveur.Serveur.lancerUnePartieSiElleEstPleine;
 
-    private static List listServeur ;
-
-
-    public Service() throws IOException, SQLException {
-        Serveur serveur = new Serveur();
-        serveur.start();
-
-    }
-
-    public static void miseEnPlaceServeurSupplementaire() throws IOException, SQLException {
-        Serveur serveur = new Serveur();
-        listServeur.add(serveur);
-        serveur.start();
-
-    }
-
-
+public class Service extends TimerTask {
 
     @Override
     public void run() {
 
-            while(true){
+        // Toutes les 30s verifier si il faut lancer une partie
 
-                // Trop de connexion mise en place d'un serveur
-
-                }
-
+        try {
+            lancerUnePartieSiElleEstPleine();
+        } catch (SQLException | IOException throwables) {
+            throwables.printStackTrace();
         }
 
-    public static void main(String[] args) throws IOException, SQLException {
+    }
 
-        // Demarage du service avec un serveur
-        Service service = new Service();
-        service.start();
-
+    public static void main(String[] args) {
+        Timer timer;
+        timer = new Timer();
+        timer.schedule(new Service(), 20000, 20000);
     }
 }
+
+
+

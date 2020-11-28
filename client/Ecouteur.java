@@ -49,6 +49,13 @@ public class Ecouteur extends Thread {
 
                     if(msg.getTypeMessage()==("startGame")){
                         zoneMessage.setText(msg.getMessage());
+
+
+
+
+
+
+
                     }
 
                     if(msg.getTypeMessage()==("FULLSERVER")){
@@ -66,6 +73,8 @@ public class Ecouteur extends Thread {
                         saisieTexte.setVisible(false);
 
                     }
+
+
 
 
 

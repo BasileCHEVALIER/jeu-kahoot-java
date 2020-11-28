@@ -9,13 +9,17 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.List;
 
+import static serveur.Serveur.DemanderDeParticipationAUnePartie;
+
 public class Connexion extends Thread {
 
     Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos ;
-    private int idPartie;
+
+    private int idPartie; // ID de la parie
     private int iD; // ID de la connexion
+    private int idJoueur; // ID du joueur
 
     public ObjectInputStream getOis() {
         return ois;
@@ -41,7 +45,6 @@ public class Connexion extends Thread {
                     System.out.println("EXPEDITEUR : "+message.getExpediteur());
 
                     // Lister les connexions
-                    listerLesConnexions();
 
 
                     /*
@@ -67,23 +70,27 @@ public class Connexion extends Thread {
                     if(message.getTypeMessage().compareTo("INSCRIPTION")==0){
                         try {
                             RequeteKahoot requeteKahoot = new RequeteKahoot();
-                            // Warning specific
+
                             int idJoueur = requeteKahoot.addJoueur(message.getExpediteur(),message.getMessage());
-                            System.out.println("ID du nouveau joueur "+idJoueur);
 
                             if(idJoueur==-1){
                                 Message messageRetour = new Message("server","Ton pseudo est déjà utilisé","ERROR");
                                 this.oos.writeObject(messageRetour);
                             }else{
-                                // ADD user in table partie_has_joueur
-                                int retourAddJoueurHasAParie =requeteKahoot.addJoueurHasAParie(idJoueur,idPartie);
+                                this.idJoueur=idJoueur;
+                                this.idPartie=DemanderDeParticipationAUnePartie(idJoueur);
                                 Message messageRetour = new Message("server","Tu es inscris au site pour une partie","INSCRIPTION_PARTIE_GOOD");
                                 this.oos.writeObject(messageRetour);
+
                             }
                         } catch (SQLException throwables) {
                             throwables.printStackTrace();
                         }
                     }
+
+
+
+
 
                     /*
                      * Part : Se connecter
@@ -110,9 +117,11 @@ public class Connexion extends Thread {
                                 Message messageRetour = new Message("server","Ton pseudo ou mdp n'est pas bon ","ERROR");
                                 this.oos.writeObject(messageRetour);
                             }else{
-                                int retourAddJoueurHasAParie =requeteKahoot.addJoueurHasAParie(idJoueur,idPartie);
+                                this.idJoueur=idJoueur;
+                                this.idPartie=DemanderDeParticipationAUnePartie(idJoueur);
                                 Message messageRetour = new Message("server","Tu es connecté","INSCRIPTION_PARTIE_GOOD");
                                 this.oos.writeObject(messageRetour);
+
                             }
                         } catch (SQLException throwables) {
                             throwables.printStackTrace();
@@ -121,7 +130,8 @@ public class Connexion extends Thread {
                     }
 
 
-
+                    System.out.println("SERVER : Lister les co ");
+                    listerLesConnexions();
 
 
                 }
@@ -134,48 +144,31 @@ public class Connexion extends Thread {
         }
     }
 
+    public void setIdJoueur(int idJoueur) {
+        this.idJoueur = idJoueur;
+    }
 
 
-    public  synchronized void sendMessageStartGame(){
-        Message message = new Message("SERVER","Nous allons commencer la partie","startGame");
-        synchronized (Serveur.getListConnexion()){
-            List<Connexion> liste  =Serveur.getListConnexion();
-            for (Connexion con:liste) {
-                try {
-                    con.getOos().writeObject(message);
-                    con.getOos().flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    /*
+    * Fonction : sendMessageStartGame(int idPartie)
+    * Objectifs : Envoyer un message de debut de partie à tous les participants de la partie n
+    *
+    * Retour : pas de retour
+    *
+    * */
+    public  void sendMessageStartGame(int idPartie,Message message) throws IOException {
+            if(this.getIdPartie()==idPartie){
+                this.getOos().writeObject(message);
+                this.getOos().flush();
             }
-        }
-    }
-
-
-    private  synchronized void distriuberMessage(Object message){
-        synchronized (Serveur.getListConnexion()){
-            List<Connexion> liste  =Serveur.getListConnexion();
-            for (Connexion con:liste) {
-                try {
-                    con.getOos().writeObject(message);
-                    con.getOos().flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
 
 
-    public  synchronized void distriuberMessagePourUnClient(Object message){
-                try {
-                    this.getOos().writeObject(message);
-                    this.getOos().flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    public int getIdPartie() {
+        return idPartie;
     }
+
 
 
 
@@ -199,10 +192,8 @@ public class Connexion extends Thread {
         ois = new ObjectInputStream(is);
         this.iD=(int)(Math.random() * 999999);
 
-
         // Montrer aux autres qui se connecte à la partie
-        distriuberMessage(new client.Message("Serveur","--Nouvelle personne--"));
-
+        //distriuberMessage(new client.Message("Serveur","--Nouvelle personne--","VALID"));
     }
 
     @Override
@@ -211,7 +202,9 @@ public class Connexion extends Thread {
                 "socket=" + socket +
                 ", ois=" + ois +
                 ", oos=" + oos +
-                ", iD='" + iD + '\'' +
+                ", idPartie=" + idPartie +
+                ", iD=" + iD +
+                ", idJoueur=" + idJoueur +
                 '}';
     }
 

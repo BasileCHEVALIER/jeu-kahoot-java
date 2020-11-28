@@ -1,6 +1,9 @@
 package gestionBdd;
 
 
+import data.Question;
+import data.Reponse;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -163,8 +166,6 @@ public class RequeteKahoot {
         return -1;
     }
 
-
-
     public int creationNouvellePartie() throws SQLException {
         try {
             String requete = "INSERT INTO `partie` (`ID_PARTIE`) VALUES (NULL); ";
@@ -191,7 +192,6 @@ public class RequeteKahoot {
         return -1;
     }
 
-
     public int addJoueurHasAParie(int idJoueur,int idPartie) throws SQLException {
         try {
             String requete = "INSERT INTO `partie_has_joueur`(`ID_PARTI`, `ID_JOUEUR`, `score_partie`) VALUES (?,?,0) ";
@@ -216,6 +216,58 @@ public class RequeteKahoot {
         }
         return -1;
     }
+
+    // Permet de mettre 10 question dans la  table question has a partie
+    public void chargerLesQuestionDeLaPartie(int idPartie) throws SQLException {
+
+        String requete = "INSERT INTO question_has_a_partie SELECT ?,ID_QUESTION FROM question LIMIT 10";
+
+        PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setInt(1, idPartie);
+
+        pstmt.executeUpdate();
+        ResultSet res = pstmt.getGeneratedKeys();
+        res.close();
+        pstmt.close();
+
+    }
+
+    public List getLesQuestionsDeLaPartie(int idPartie) throws SQLException {
+
+        List<Question> lesQuestions=new ArrayList<Question>();
+
+        List <Integer> idDesQuestions=new ArrayList<>();
+
+        // Requete SQL qui va remplir le tableau avec les ID des question à gérer
+        String requete = "SELECT ID_QUESTION FROM `question_has_a_partie` WHERE ID_PARTIE=? ";
+        PreparedStatement pstmt = connect.prepareStatement(requete);
+        pstmt.setInt(1, idPartie);
+        ResultSet res = pstmt.executeQuery();
+        if (res.next()) {
+            idDesQuestions.add(res.getInt(1));
+        }
+        res.close();
+        pstmt.close();
+
+        // Requete SQL parcours des questions
+        for (int i=0;i<idDesQuestions.size();i++){
+
+            // Creation de mon objet question et reponse qui est la bonne réponse et du tableau les propostions
+            Question maQuestion = new Question(getTextQuestion(idDesQuestions.get(i)),idDesQuestions.get(i));
+            Reponse laBonneReponse = getLaBonneReponse(idDesQuestions.get(i));
+            List<Reponse> lesPropositions = getLesPropositions(idDesQuestions.get(i));
+
+
+            // Ajouter la bonneRéponse et la bonne reponse a question
+            maQuestion.setBonneReponse(laBonneReponse);
+            maQuestion.setLesPropositions(lesPropositions);
+
+            lesQuestions.add(maQuestion);
+        }
+
+        return lesQuestions;
+    }
+
 
 
 

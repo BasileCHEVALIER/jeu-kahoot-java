@@ -10,6 +10,11 @@ public class Question {
     private String laQuestion;
     private int idQuestion;
 
+    public Question(String laQuestion, int idQuestion) {
+        this.laQuestion = laQuestion;
+        this.idQuestion = idQuestion;
+    }
+
     public List getLesPropositions() {
         return lesPropositions;
     }
