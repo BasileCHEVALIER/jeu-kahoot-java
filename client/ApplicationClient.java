@@ -156,13 +156,15 @@ public class ApplicationClient extends JDialog {
             zoneMessage.setText("Mauvaise reponse");
 
         }
-
+/*
         try {
             ecouteur.attente();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+
+ */
         String login = name.getText();
         try {
             connexion.getOos().writeObject(new Message(login,"JE_VEUX_LA_QUESTION_SUIVANTE","QUESTION",lesQuestions,score));
