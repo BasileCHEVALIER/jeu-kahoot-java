@@ -149,8 +149,7 @@ public class Serveur extends Thread implements Serializable {
                 Message message = new Message("SERVER","Nous allons commencer la partie ","QUESTION");
 
                 // Creation de la list qui va contenir toutes les questions
-                List <Question> lesQuestions = new ArrayList<>();
-
+                List <Question> lesQuestions ;
 
                 // Recuperation du tableau avec les questions
                 lesQuestions=requeteKahoot.getLesQuestionsDeLaPartie(idPartie);

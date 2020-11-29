@@ -23,6 +23,7 @@ public class Ecouteur extends Thread {
     private JPanel buttonReponsePanel;
 
     private List<Question> lesQuestions;
+    private int score;
 
     public Ecouteur(JTextArea zoneMessage,Connexion connexion,JButton inscriptionButton, JButton connexionButton,JTextField name,JTextField saisieTexte,JPanel logPanel,JPanel buttonReponsePanel,List lesQuestions) {
         this.zoneMessage = zoneMessage;
@@ -40,7 +41,11 @@ public class Ecouteur extends Thread {
         this.buttonReponsePanel.setVisible(false);
 
         this.lesQuestions=lesQuestions;
+        this.score=0;
+    }
 
+    public int getScore() {
+        return score;
     }
 
     public List<Question> getLesQuestions() {
@@ -68,19 +73,24 @@ public class Ecouteur extends Thread {
                     // On affiche une question à la fois
                     if(msg.getTypeMessage().compareTo("QUESTION")==0){
 
+                        System.out.println("LES QUESTIONS :"+msg.getLesQuestions());
+
                         buttonReponsePanel.setVisible(true); // Afficher les boutons pour jouer
 
                         // On doit sauvegarder la liste de Question dans Appication client
                         // Ensuite lors d'un clic sur un des boutons a b c d ou
                         lesQuestions=msg.getLesQuestions();
+                        score=msg.getScore();
 
                         // Afficher la premiere question de la liste
                         msg.getLesQuestions().size(); // la taille des questions
-                        zoneMessage.setText(msg.getLesQuestions().get(1).getLaQuestion());
+                        zoneMessage.setText(msg.getLesQuestions().get(0).getLaQuestion());
 
-
-                        for(int i=0;i<=msg.getLesQuestions().get(1).getLesPropositions().size();i++){
-                            Reponse uneReponse= (Reponse) msg.getLesQuestions().get(1).getLesPropositions().get(i);
+                        int nbPropo=msg.getLesQuestions().get(0).getLesPropositions().size();
+                        zoneMessage.append("\n");
+                        for(int i=0;i<nbPropo;i++){
+                            Reponse uneReponse= (Reponse) msg.getLesQuestions().get(0).getLesPropositions().get(i);
+                            System.out.println(uneReponse.getTexteReponse());
                             zoneMessage.append(i+". "+uneReponse.getTexteReponse()+"\n");
                         }
 
@@ -95,6 +105,8 @@ public class Ecouteur extends Thread {
                     // Indiquer à l'utilisateur son score
                     if(msg.getTypeMessage().compareTo("FINPARTIE")==0){
                         zoneMessage.setText(msg.getMessage());
+                        zoneMessage.append("\n");
+                        zoneMessage.append("Votre score est : "+msg.getScore());
                     }
 
 

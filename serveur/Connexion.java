@@ -28,6 +28,8 @@ public class Connexion extends Thread {
         return oos;
     }
 
+    private int score = 0;
+
     @Override
     public void run() {
         while (true){
@@ -89,23 +91,40 @@ public class Connexion extends Thread {
 
                     /*
                     * Part : Question
-                    * L'utilisateur recoit toute les questions dans l'objet
+                    * L'utilisateur recoit toutes les questions dans l'objet message
+                    * On lui pose la question index 0,
+                    * Il demande la nouvelle question, donc on supprime l'ancienne à l'index 0
+                    *
                     *
                     * */
                     if(message.getTypeMessage().compareTo("QUESTION")==0){
 
                         // On va retirer les questions de la liste au fur et a mesure
-                        if(message.getLesQuestions().size()!=0){
+                        int NbQuestion=message.getLesQuestions().size();
+
+                        if(NbQuestion>1){
+                            // Afficher le message
                             System.out.println(message.toString());
 
-                        }else{
+                            // On retire la question qui vient d'être posé
+                            message.getLesQuestions().remove(0);
+                            System.out.println(message.getLesQuestions().toString());
+
+                            this.score=message.getScore();
+
+                            // Creation du nouveau message
+                            Message messageRetour = new Message("SERVER","Nous allons commencer la partie ","QUESTION");
+
+                            // Dans le message de retour on maj les question ( pour enlever celle qui est posé la 0)
+                            messageRetour.setLesQuestions(message.getLesQuestions());
+
+                            this.oos.writeObject(messageRetour);
+
+                        }else {
                             // Renvoyer un message au client avec les questions avec la question en moins
                             Message messageRetour = new Message("server","La fin de la partie ! ","FINPARTIE");
                             this.oos.writeObject(messageRetour);
                         }
-
-
-
 
                     }
 
@@ -150,9 +169,11 @@ public class Connexion extends Thread {
                     }
 
 
-                    System.out.println("SERVER : Lister les co ");
+                    /*System.out.println("SERVER : Lister les co ");
                     listerLesConnexions();
 
+
+                     */
 
                 }
 

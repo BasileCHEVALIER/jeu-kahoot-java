@@ -1,12 +1,15 @@
 package client;
 
 import data.Question;
+import data.Reponse;
 
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 public class ApplicationClient extends JDialog {
     private static final String host = "localhost";
@@ -18,8 +21,8 @@ public class ApplicationClient extends JDialog {
     private JTextField saisieTexte;
     private JButton bButton;
     private JButton aButton;
+    private JButton a2Button;
     private JButton a3Button;
-    private JButton a4Button;
     private JButton inscriptionButton;
     private JButton connexionButton;
     private JButton quitterButton;
@@ -62,19 +65,25 @@ public class ApplicationClient extends JDialog {
 
         aButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //testOnEnvoie();
-                lesQuestions=ecouteur.getLesQuestions();
-                System.out.println("okkkk");
-                System.out.println(lesQuestions.toString());
-
-                // Afficher si la bonne reponse
-
+                REPONSE(0);
             }
         });
 
         bButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                REPONSE(1);
+            }
+        });
 
+        a2Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                REPONSE(2);
+            }
+        });
+
+        a3Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                REPONSE(3);
             }
         });
 
@@ -117,6 +126,56 @@ public class ApplicationClient extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
     }
+
+
+
+
+    public void REPONSE(int intrepUser){
+
+        int score = ecouteur.getScore() ; // Par défaut utilisateur a faux !
+
+        System.out.println("L'utilisateur a repondu : "+intrepUser);
+
+        lesQuestions=ecouteur.getLesQuestions();
+        System.out.println("okkkk");
+        System.out.println(lesQuestions.toString());
+
+        // Prevenir l'utilisateur si il a la bonne réponse
+        Question laQuestion=lesQuestions.get(0);
+
+        // On a la reponse de l'utilisateur qui est la place 1 dans la liste
+        // On va donc chercher dans les propositions id de la réponse 1
+        Reponse uneReponse= (Reponse) laQuestion.getLesPropositions().get(intrepUser);
+        System.out.println(uneReponse.getTexteReponse());
+        if(laQuestion.getBonneReponse().getIdReponse()==uneReponse.getIdReponse()){
+            zoneMessage.setText("Bonne Reponse !!");
+            score++;
+
+        }else{
+            zoneMessage.setText("Mauvaise reponse");
+
+        }
+
+        try {
+            sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        String login = name.getText();
+        try {
+            connexion.getOos().writeObject(new Message(login,"JE_VEUX_LA_QUESTION_SUIVANTE","QUESTION",lesQuestions,score));
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        try {
+            connexion.getOos().flush();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+    }
+
 
     /*
     * Function : private void inscription()
@@ -201,20 +260,6 @@ public class ApplicationClient extends JDialog {
     }
 
 
-    private void testOnEnvoie(){
-        String login=name.getText();
-        String textMessage=saisieTexte.getText();
-
-        try {
-            // Message(String expediteur, String message, String typeMessage)
-            connexion.getOos().writeObject(new Message(login,"A","REPONSE"));
-            connexion.getOos().flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        zoneMessage.setText("");
-        zoneMessage.setText("Envoi de la réponse a ");
-    }
 
     private void onCancel() {
         // add your code here if necessary
