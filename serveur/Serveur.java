@@ -16,16 +16,12 @@ public class Serveur extends Thread {
     private static final int port=60000; // port
     private ServerSocket serverSocket; // La socket qui va ecouter
     private static List<Connexion> listConnexion; // La list des
-
     private static RequeteKahoot requeteKahoot ;
     private static List<DataPartie> listeDesPartiesEnCours;
-
-    private static int nbJoueurMaxParPartie = 2 ;
-
+    private static int nbJoueurMaxParPartie = 2 ; // Voir pour faire un crusteur pour choisir le NB_MAX de personnes dans la partie
 
 
     public Serveur() throws IOException, SQLException {
-
 
         this.serverSocket = new ServerSocket(port);
         listConnexion = new ArrayList<>();
@@ -37,10 +33,7 @@ public class Serveur extends Thread {
         listeDesPartiesEnCours = new ArrayList<>();
         listeDesPartiesEnCours.add(dataPartie);
 
-        System.out.println("La liste des parties :"+listeDesPartiesEnCours);
-
         // Lance un timer qui va verifier les parties toutes les x secondes
-
         Timer timer;
         timer = new Timer();
         timer.schedule(new Service(), 20000, 20000);
@@ -162,6 +155,7 @@ public class Serveur extends Thread {
 
                 // Ajout des questions à l'objet message
                 message.setLesQuestions(lesQuestions);
+                System.out.println("SERVER : Les questions de la partie : "+lesQuestions.toString());
 
                 // Envoi des messages aux utilisateurs de la partie
                 for(int j=0;j<listConnexion.size();j++){
@@ -177,7 +171,13 @@ public class Serveur extends Thread {
 
 
 
-
+    /*
+    * Fonction : ajouterUnePartieALaListeDePartie()
+    *
+    * Objectif(s) : Ajouter une partie à la liste
+    *
+    * Retour : Pas de retour
+    * */
     public static void ajouterUnePartieALaListeDePartie() throws SQLException {
 
         int idPartie=requeteKahoot.creationNouvellePartie();
@@ -197,8 +197,6 @@ public class Serveur extends Thread {
     }
 
 
-
-
     public static synchronized List<Connexion> getListConnexion() {
         return listConnexion;
     }
@@ -209,30 +207,12 @@ public class Serveur extends Thread {
         try {
             while(true){
 
-                /*
-                * Creation d'un nouveau thread pour le nouveau client
-                * Lancement de l'excution du thread
-                *
-                * Deroulement du serveur
-                * 0. Lors du constru
-                * 1. Etape de connexion entre le client et le serveur
-                * 2. Attribuer une partie qui n'a pas commencé à l'utilisateur.
-                *    Pour cela on a une list de partie
-                * 3. Lorsqu'une personne est connecté login & password ou bien inscrite on va lui attribuer une partie
-                * 4. Tant que la partie n'est pas pleine elle n'est pas lancé !
-                *
-                * */
-
                 Connexion con = new Connexion(serverSocket.accept(),0);
-
                 synchronized(listConnexion) {
 
                     listConnexion.add(con); // Ajouter l'utilisateur à la liste de connexion
                     con.start(); // Lancer le thread connexion pour intéragir avec l'utilisateur
-
-
                 }
-
             }
 
         } catch (IOException e) {
@@ -248,7 +228,5 @@ public class Serveur extends Thread {
         // Le nombre de joueur max par partie faire un constructeur Serveur par défaut !!!
         Serveur serv = new Serveur();
         serv.start();
-
-
     }
 }

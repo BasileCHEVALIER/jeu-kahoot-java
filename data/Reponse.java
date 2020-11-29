@@ -5,6 +5,14 @@ public class Reponse {
     private String texteReponse;
     private int idReponse;
 
+
+
+
+    public Reponse(int idReponse, String texteReponse) {
+        this.idReponse = idReponse;
+        this.texteReponse=texteReponse;
+    }
+
     public String getTexteReponse() {
         return texteReponse;
     }
