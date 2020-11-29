@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.List;
 
+import static java.lang.Thread.onSpinWait;
 import static java.lang.Thread.sleep;
 
 public class ApplicationClient extends JDialog {
@@ -157,7 +158,7 @@ public class ApplicationClient extends JDialog {
         }
 
         try {
-            sleep(3000);
+            ecouteur.attente();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

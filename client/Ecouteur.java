@@ -52,6 +52,10 @@ public class Ecouteur extends Thread {
         return lesQuestions;
     }
 
+    public void attente() throws InterruptedException {
+        sleep(3000);
+    }
+
     @Override
     public void run() {
         while (!this.currentThread().isInterrupted()){
