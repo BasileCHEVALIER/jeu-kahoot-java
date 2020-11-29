@@ -1,6 +1,8 @@
 package data;
 
-public class Reponse {
+import java.io.Serializable;
+
+public class Reponse implements Serializable {
 
     private String texteReponse;
     private int idReponse;
@@ -29,10 +31,12 @@ public class Reponse {
         this.texteReponse = texteReponse;
     }
 
+
     @Override
     public String toString() {
         return "Reponse{" +
                 "texteReponse='" + texteReponse + '\'' +
+                ", idReponse=" + idReponse +
                 '}';
     }
 }

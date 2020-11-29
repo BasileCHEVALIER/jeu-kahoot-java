@@ -44,9 +44,6 @@ public class Connexion extends Thread {
                     System.out.println("TYPE MESSAGE : "+message.getTypeMessage());
                     System.out.println("EXPEDITEUR : "+message.getExpediteur());
 
-                    // Lister les connexions
-
-
                     /*
                      * Part : Inscription
                      * RequeteKahoot allows connection with database
@@ -79,7 +76,7 @@ public class Connexion extends Thread {
                             }else{
                                 this.idJoueur=idJoueur;
                                 this.idPartie=DemanderDeParticipationAUnePartie(idJoueur);
-                                Message messageRetour = new Message("server","Tu es inscris au site pour une partie","INSCRIPTION_PARTIE_GOOD");
+                                Message messageRetour = new Message("server","Tu es inscris, en attente des autres joueurs","INSCRIPTION_PARTIE_GOOD");
                                 this.oos.writeObject(messageRetour);
 
                             }
@@ -88,6 +85,29 @@ public class Connexion extends Thread {
                         }
                     }
 
+
+
+                    /*
+                    * Part : Question
+                    * L'utilisateur recoit toute les questions dans l'objet
+                    *
+                    * */
+                    if(message.getTypeMessage().compareTo("QUESTION")==0){
+
+                        // On va retirer les questions de la liste au fur et a mesure
+                        if(message.getLesQuestions().size()!=0){
+                            System.out.println(message.toString());
+
+                        }else{
+                            // Renvoyer un message au client avec les questions avec la question en moins
+                            Message messageRetour = new Message("server","La fin de la partie ! ","FINPARTIE");
+                            this.oos.writeObject(messageRetour);
+                        }
+
+
+
+
+                    }
 
 
 
@@ -119,7 +139,7 @@ public class Connexion extends Thread {
                             }else{
                                 this.idJoueur=idJoueur;
                                 this.idPartie=DemanderDeParticipationAUnePartie(idJoueur);
-                                Message messageRetour = new Message("server","Tu es connecté","INSCRIPTION_PARTIE_GOOD");
+                                Message messageRetour = new Message("server","Tu es connecté en attente des autres joueurs","INSCRIPTION_PARTIE_GOOD");
                                 this.oos.writeObject(messageRetour);
 
                             }

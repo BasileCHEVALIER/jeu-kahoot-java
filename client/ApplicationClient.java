@@ -18,15 +18,22 @@ public class ApplicationClient extends JDialog {
     private JTextField saisieTexte;
     private JButton bButton;
     private JButton aButton;
-    private JButton cButton;
-    private JButton dButton;
+    private JButton a3Button;
+    private JButton a4Button;
     private JButton inscriptionButton;
     private JButton connexionButton;
     private JButton quitterButton;
+    private JPanel logPanel;
+    private JPanel buttonReponsePanel;
     private Connexion connexion;
     private Ecouteur ecouteur;
-    private Question laQuestion;
 
+
+    public List<Question> lesQuestions ;
+
+    public void maj(List<Question> lesQuestions) {
+        this.lesQuestions = lesQuestions;
+    }
 
     public ApplicationClient() {
 
@@ -36,12 +43,14 @@ public class ApplicationClient extends JDialog {
             e.printStackTrace();
         }
 
-        ecouteur = new Ecouteur(zoneMessage,connexion,inscriptionButton,connexionButton,name,saisieTexte);
+        ecouteur = new Ecouteur(zoneMessage,connexion,inscriptionButton,connexionButton,name,saisieTexte,logPanel,buttonReponsePanel,lesQuestions);
         ecouteur.start();
 
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonEnvoie);
+
+
 
         buttonEnvoie.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -53,7 +62,13 @@ public class ApplicationClient extends JDialog {
 
         aButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testOnEnvoie();
+                //testOnEnvoie();
+                lesQuestions=ecouteur.getLesQuestions();
+                System.out.println("okkkk");
+                System.out.println(lesQuestions.toString());
+
+                // Afficher si la bonne reponse
+
             }
         });
 
@@ -173,7 +188,6 @@ public class ApplicationClient extends JDialog {
     }
 
 
-
     private void onEnvoie(){
         String login=name.getText();
         String message=saisieTexte.getText();
@@ -202,7 +216,6 @@ public class ApplicationClient extends JDialog {
         zoneMessage.setText("Envoi de la réponse a ");
     }
 
-
     private void onCancel() {
         // add your code here if necessary
         dispose();
@@ -225,4 +238,7 @@ public class ApplicationClient extends JDialog {
         dialog.setVisible(true);
         System.exit(0);
     }
+
+
 }
+

@@ -1,13 +1,14 @@
 package serveur;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static serveur.Serveur.lancerUnePartieSiElleEstPleine;
 
-public class Service extends TimerTask {
+public class Service extends TimerTask implements Serializable {
 
     @Override
     public void run() {

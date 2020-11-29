@@ -5,13 +5,14 @@ import data.Question;
 import gestionBdd.RequeteKahoot;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.*;
 
-public class Serveur extends Thread {
+public class Serveur extends Thread implements Serializable {
 
     private static final int port=60000; // port
     private ServerSocket serverSocket; // La socket qui va ecouter
@@ -145,17 +146,21 @@ public class Serveur extends Thread {
                 System.out.println("SERVER : Lancement de la partie "+idPartie);
 
                 // Creation de l'objet message
-                Message message = new Message("SERVER","Nous allons commencer la partie","startGame");
+                Message message = new Message("SERVER","Nous allons commencer la partie ","QUESTION");
 
                 // Creation de la list qui va contenir toutes les questions
                 List <Question> lesQuestions = new ArrayList<>();
+
 
                 // Recuperation du tableau avec les questions
                 lesQuestions=requeteKahoot.getLesQuestionsDeLaPartie(idPartie);
 
                 // Ajout des questions à l'objet message
                 message.setLesQuestions(lesQuestions);
-                System.out.println("SERVER : Les questions de la partie : "+lesQuestions.toString());
+
+                message.toString();
+
+                //System.out.println("SERVER : Les questions de la partie : "+lesQuestions.toString());
 
                 // Envoi des messages aux utilisateurs de la partie
                 for(int j=0;j<listConnexion.size();j++){

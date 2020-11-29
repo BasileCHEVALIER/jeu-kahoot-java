@@ -1,9 +1,10 @@
 package data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Question {
+public class Question implements Serializable {
 
     private List lesPropositions = new ArrayList<Reponse>();
     private Reponse bonneReponse;

@@ -1,7 +1,12 @@
 package client;
 
+import data.Question;
+import data.Reponse;
+
 import javax.swing.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Ecouteur extends Thread {
@@ -9,15 +14,17 @@ public class Ecouteur extends Thread {
     private JTextArea zoneMessage;
     private Connexion connexion;
 
-
     // Ajout des variables suivantes pour les
     private JButton inscriptionButton;
     private JButton connexionButton;
     private JTextField name;
     private JTextField saisieTexte;
+    private JPanel logPanel;
+    private JPanel buttonReponsePanel;
 
+    private List<Question> lesQuestions;
 
-    public Ecouteur(JTextArea zoneMessage,Connexion connexion,JButton inscriptionButton, JButton connexionButton,JTextField name,JTextField saisieTexte) {
+    public Ecouteur(JTextArea zoneMessage,Connexion connexion,JButton inscriptionButton, JButton connexionButton,JTextField name,JTextField saisieTexte,JPanel logPanel,JPanel buttonReponsePanel,List lesQuestions) {
         this.zoneMessage = zoneMessage;
         this.connexion = connexion;
 
@@ -26,11 +33,19 @@ public class Ecouteur extends Thread {
         this.connexionButton = connexionButton;
         this.name=name;
         this.saisieTexte=saisieTexte;
+        this.logPanel=logPanel;
 
+        // Les nouveaux ajouts
+        this.buttonReponsePanel=buttonReponsePanel;
+        this.buttonReponsePanel.setVisible(false);
+
+        this.lesQuestions=lesQuestions;
 
     }
 
-
+    public List<Question> getLesQuestions() {
+        return lesQuestions;
+    }
 
     @Override
     public void run() {
@@ -39,58 +54,48 @@ public class Ecouteur extends Thread {
                 Message msg = (Message) connexion.getOis().readObject();
                 if (msg!=null){
 
+                    // Permet d'afficher les messages du serveur
+                    // To do : Pourquoi pas ajouter un switch case pour gerer les cas d'un maniere plus fine !
                     zoneMessage.append(msg.getExpediteur()+" : "+msg.getMessage()+"\n");
 
+                    // Permet le debug pour savoir ce qu'il se passe entre le serveur et le client !
                     System.out.println("---ECOUTEUR---");
                     System.out.println("TYPEMESSAGE : "+msg.getTypeMessage());
                     System.out.println("MESSAGE : "+msg.getMessage());
                     System.out.println("EXPEDITEUR : "+msg.getExpediteur());
 
 
-                    if(msg.getTypeMessage()==("startGame")){
-                        zoneMessage.setText(msg.getMessage());
+                    // On affiche une question à la fois
+                    if(msg.getTypeMessage().compareTo("QUESTION")==0){
+
+                        buttonReponsePanel.setVisible(true); // Afficher les boutons pour jouer
+
+                        // On doit sauvegarder la liste de Question dans Appication client
+                        // Ensuite lors d'un clic sur un des boutons a b c d ou
+                        lesQuestions=msg.getLesQuestions();
+
+                        // Afficher la premiere question de la liste
+                        msg.getLesQuestions().size(); // la taille des questions
+                        zoneMessage.setText(msg.getLesQuestions().get(1).getLaQuestion());
 
 
-
-
-
+                        for(int i=0;i<=msg.getLesQuestions().get(1).getLesPropositions().size();i++){
+                            Reponse uneReponse= (Reponse) msg.getLesQuestions().get(1).getLesPropositions().get(i);
+                            zoneMessage.append(i+". "+uneReponse.getTexteReponse()+"\n");
+                        }
 
 
                     }
 
-                    if(msg.getTypeMessage()==("FULLSERVER")){
-                        // Bloquer les boutons
-                        // Pour emepeche l'utilisateur de faire une nouvelle requete
-
-                    }
-
-                    // Faire disparaitre l'interface de connexion
+                    // Faire disparaitre l'interface de connexion & inscription
                     if(msg.getTypeMessage().compareTo("INSCRIPTION_PARTIE_GOOD")==0){
-                        System.out.println("inx");
-                        inscriptionButton.setVisible(false);;
-                        connexionButton.setVisible(false);
-                        name.setVisible(false);
-                        saisieTexte.setVisible(false);
-
+                        logPanel.setVisible(false);
                     }
 
-
-
-
-
-                    /*
-                    TO DO....
-                    if(msg.getTypeMessage()==("QUITTER")){
-                        // Bloquer les boutons
-                        // Pour emepeche l'utilisateur de faire une nouvelle requete
-                        System.out.println("quiter");
-                        this.connexion.close();
-
-                        this.interrupt();
+                    // Indiquer à l'utilisateur son score
+                    if(msg.getTypeMessage().compareTo("FINPARTIE")==0){
+                        zoneMessage.setText(msg.getMessage());
                     }
-                    */
-
-
 
 
                 }
@@ -106,4 +111,6 @@ public class Ecouteur extends Thread {
         }
         this.interrupt();
     }
+
+
 }
