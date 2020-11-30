@@ -99,6 +99,13 @@ public class Connexion extends Thread {
                     * */
                     if(message.getTypeMessage().compareTo("QUESTION")==0){
 
+
+                        try {
+                            sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                         // On va retirer les questions de la liste au fur et a mesure
                         int NbQuestion=message.getLesQuestions().size();
 
