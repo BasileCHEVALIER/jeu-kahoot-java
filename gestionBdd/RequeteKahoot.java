@@ -170,16 +170,36 @@ public class RequeteKahoot {
     * Retour : Pas de retour
      * */
     public void chargerLesQuestionDeLaPartie(int idPartie) throws SQLException {
+        //recup un id de catégorie aleatoire
+        int idCat=finCategorieAleatoire();
 
-        String requete = "INSERT INTO question_has_a_partie SELECT ?,ID_QUESTION FROM question LIMIT 10";
+        String requete = "INSERT INTO question_has_a_partie SELECT ?,ID_QUESTION FROM question WHERE ID_CATEGORIE=? ORDER BY rand() LIMIT 10";
 
         PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
         pstmt.setInt(1, idPartie);
+        pstmt.setInt(2,idCat);
 
         pstmt.executeUpdate();
         ResultSet res = pstmt.getGeneratedKeys();
         res.close();
         pstmt.close();
+
+    }
+
+    public int finCategorieAleatoire() throws SQLException {
+        int id=0;
+
+        String requete = "SELECT idCATEGORIE FROM categorie ORDER BY rand() LIMIT 1";
+        PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
+        ResultSet res = pstmt.executeQuery();
+
+        if (res.next()) {
+            id = res.getInt(1);
+        }
+        res.close();
+        pstmt.close();
+
+        return id;
 
     }
 
@@ -476,22 +496,46 @@ public class RequeteKahoot {
         return idq;
     }
 
-    public boolean addProposition(Question q, Reponse r, int bonneRep)
-    {
-        String requete = "INSERT INTO propositions(ID_QUESTION,ID_REPONSE,bonneReponse) VALUES(?,?,?)";
-        PreparedStatement pstmt = null;
-        try {
-            pstmt = connect.prepareStatement(requete);
-            pstmt.setInt(1, q.getIdQuestion()); // Identifiant de la question qui vient d'être créée
-            pstmt.setInt(2, r.getIdReponse()); // Identifiant de la réponse de cette proposition
-            pstmt.setInt(3, bonneRep);// Identifiant de la réponse de cette proposition
+    public boolean addProposition(Question q, Reponse r, int bonneRep) throws SQLException {
 
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        int test = findProposition(q,r,bonneRep);
+
+        if (test==0){
+            String requete = "INSERT INTO propositions(ID_QUESTION,ID_REPONSE,bonneReponse) VALUES(?,?,?)";
+            PreparedStatement pstmt = null;
+            try {
+                pstmt = connect.prepareStatement(requete);
+                pstmt.setInt(1, q.getIdQuestion()); // Identifiant de la question qui vient d'être créée
+                pstmt.setInt(2, r.getIdReponse()); // Identifiant de la réponse de cette proposition
+                pstmt.setInt(3, bonneRep);// Identifiant de la réponse de cette proposition
+
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+        else {
+            System.out.println("proposition déjà en BDD");
             return false;
         }
-        return true;
+    }
+
+    public int findProposition(Question q, Reponse r, int bonneRep) throws SQLException {
+        int idq = 0;
+        String requete = "SELECT * from propositions where ID_QUESTION=? AND ID_REPONSE=? AND bonneReponse=?";
+        PreparedStatement pstmt = connect.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setInt(1, q.getIdQuestion()); // Identifiant de la question qui vient d'être créée
+        pstmt.setInt(2, r.getIdReponse()); // Identifiant de la réponse de cette proposition
+        pstmt.setInt(3, bonneRep);// Identifiant de la réponse de cette proposition
+
+        ResultSet res = pstmt.executeQuery();
+
+        while (res.next()) {
+            idq = res.getInt("ID_QUESTION");
+        }
+        return idq;
     }
 
 
