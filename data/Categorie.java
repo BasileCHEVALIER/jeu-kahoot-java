@@ -2,6 +2,9 @@ package data;
 
 import java.util.Objects;
 
+/*
+* CATEGORIE = ID + TEXTE
+ */
 public class Categorie implements Comparable{
 
     private String texteCategorie;
@@ -28,10 +31,6 @@ public class Categorie implements Comparable{
         return texteCategorie;
     }
 
-    public void setTexteCategorie(String texteCategorie) {
-        this.texteCategorie = texteCategorie;
-    }
-
     @Override
     public String toString() {
         return "Categorie{" +
@@ -47,7 +46,6 @@ public class Categorie implements Comparable{
         Categorie categorie = (Categorie) o;
         return Objects.equals(texteCategorie, categorie.texteCategorie);
     }
-
 
     @Override
     public int hashCode() {

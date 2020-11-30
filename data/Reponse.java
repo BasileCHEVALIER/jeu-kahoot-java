@@ -2,17 +2,17 @@ package data;
 
 import java.io.Serializable;
 
+/*
+* REPONSE = ID + TEXTE
+ */
 public class Reponse implements Serializable {
 
     private String texteReponse;
     private int idReponse;
 
-
-
-
     public Reponse(int idReponse, String texteReponse) {
+        this.texteReponse = texteReponse;
         this.idReponse = idReponse;
-        this.texteReponse=texteReponse;
     }
 
     public Reponse(String texteReponse) {
@@ -30,11 +30,6 @@ public class Reponse implements Serializable {
     public void setIdReponse(int idReponse) {
         this.idReponse = idReponse;
     }
-
-    public void setTexteReponse(String texteReponse) {
-        this.texteReponse = texteReponse;
-    }
-
 
     @Override
     public String toString() {

@@ -272,13 +272,14 @@ public class ApplicationClient extends JDialog {
 
     @Override
     public void dispose() {
-        super.dispose();
+        //super.dispose();
         if (connexion!=null)
         {
             System.out.println("DISPOSE");
             ecouteur.interrupt();
             connexion.close();
         }
+        super.dispose();
     }
 
     public static void main(String[] args) {
