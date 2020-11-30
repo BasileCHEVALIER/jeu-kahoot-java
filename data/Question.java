@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+* QUESTION = ID + TEXTE + CATEGORIE + LISTE REPONSES + BONNE REP
+*
+ */
 public class Question implements Serializable {
 
     private List lesPropositions = new ArrayList<Reponse>();
@@ -41,10 +45,6 @@ public class Question implements Serializable {
         return laQuestion;
     }
 
-    public void setLaQuestion(String laQuestion) {
-        this.laQuestion = laQuestion;
-    }
-
     public int getIdQuestion() {
         return idQuestion;
     }
@@ -65,7 +65,6 @@ public class Question implements Serializable {
         lesPropositions.add(rep);
     }
 
-
     @Override
     public String toString() {
         return "Question{" +
@@ -73,6 +72,7 @@ public class Question implements Serializable {
                 ", bonneReponse=" + bonneReponse +
                 ", laQuestion='" + laQuestion + '\'' +
                 ", idQuestion=" + idQuestion +
+                ", cat=" + cat +
                 '}';
     }
 }

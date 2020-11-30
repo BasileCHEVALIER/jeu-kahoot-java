@@ -30,6 +30,9 @@ public class Connexion extends Thread {
 
     private int score = 0;
 
+    private static int attendreAvantDeFermer=0;
+
+
     @Override
     public void run() {
         while (true){
@@ -134,12 +137,12 @@ public class Connexion extends Thread {
                             this.score=message.getScore();
                             messageRetour.setScore(this.score);
                             this.oos.writeObject(messageRetour);
+                            //mise à jour du score en BDD
+                            RequeteKahoot rq = new RequeteKahoot();
+                            rq.miseAJourScore(idPartie,idJoueur,score);
                         }
 
                     }
-
-
-
 
                     /*
                      * Part : Se connecter
@@ -186,11 +189,12 @@ public class Connexion extends Thread {
                      */
 
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
         }
     }
@@ -261,6 +265,7 @@ public class Connexion extends Thread {
 
     public void close(){
         try {
+            System.out.println("fermeture de connexion");
             ois.close();
             oos.close();
             socket.close();
