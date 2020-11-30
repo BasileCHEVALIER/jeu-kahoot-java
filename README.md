@@ -21,7 +21,7 @@ En réalisant un projet très simpliste de questionnaire avec base de données, 
 La partie se lance lorsque au moins 2 personnes sont inscrits ou bien connectés. 
 Le code a été conçu pour faire des parties à 2. Si une troisième personne se connecte le serveur va lancer de lui même une nouvelle partie.
 
-##Warning !
+## Warning !
 * Si il manque des utilisateurs ils vont devoir attendre qu'une personne vienne jouer 
 
 ## Les améliorations ? 
