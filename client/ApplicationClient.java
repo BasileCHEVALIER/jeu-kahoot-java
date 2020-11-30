@@ -132,6 +132,7 @@ public class ApplicationClient extends JDialog {
 
 
     public void REPONSE(int intrepUser){
+        buttonReponsePanel.setVisible(false);
 
         int score = ecouteur.getScore() ; // Par défaut utilisateur a faux !
 
