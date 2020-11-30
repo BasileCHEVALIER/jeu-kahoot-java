@@ -111,6 +111,8 @@ public class Ecouteur extends Thread {
                         zoneMessage.setText(msg.getMessage());
                         zoneMessage.append("\n");
                         zoneMessage.append("Votre score est : "+msg.getScore());
+                        logPanel.setVisible(false);
+
                     }
 
 
