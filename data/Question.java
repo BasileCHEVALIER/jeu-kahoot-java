@@ -10,10 +10,15 @@ public class Question implements Serializable {
     private Reponse bonneReponse;
     private String laQuestion;
     private int idQuestion;
+    private Categorie cat;
 
     public Question(String laQuestion, int idQuestion) {
         this.laQuestion = laQuestion;
         this.idQuestion = idQuestion;
+    }
+
+    public Question(String laQuestion) {
+        this.laQuestion = laQuestion;
     }
 
     public List getLesPropositions() {
@@ -47,6 +52,19 @@ public class Question implements Serializable {
     public void setIdQuestion(int idQuestion) {
         this.idQuestion = idQuestion;
     }
+
+    public Categorie getCat() {
+        return cat;
+    }
+
+    public void setCat(Categorie cat) {
+        this.cat = cat;
+    }
+
+    public void addProposition (Reponse rep){
+        lesPropositions.add(rep);
+    }
+
 
     @Override
     public String toString() {
