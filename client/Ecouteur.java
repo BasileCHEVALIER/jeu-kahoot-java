@@ -85,6 +85,7 @@ public class Ecouteur extends Thread {
                         // Ensuite lors d'un clic sur un des boutons a b c d ou
                         lesQuestions=msg.getLesQuestions();
                         score=msg.getScore();
+                        System.out.println("ECC = " + score);
 
                         // Afficher la premiere question de la liste
                         msg.getLesQuestions().size(); // la taille des questions
@@ -110,8 +111,8 @@ public class Ecouteur extends Thread {
                     if(msg.getTypeMessage().compareTo("FINPARTIE")==0){
                         zoneMessage.setText(msg.getMessage());
                         zoneMessage.append("\n");
-                        zoneMessage.append("Votre score est : "+msg.getScore());
-                        logPanel.setVisible(false);
+                        zoneMessage.append("Votre score est : "+msg.getScore()+"\n");
+                        logPanel.setVisible(true);
 
                     }
 
