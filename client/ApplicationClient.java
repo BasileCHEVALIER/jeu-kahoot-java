@@ -133,6 +133,9 @@ public class ApplicationClient extends JDialog {
 
     public void REPONSE(int intrepUser){
 
+        // cacher les bouton
+        buttonReponsePanel.setVisible(false);
+
         int score = ecouteur.getScore() ; // Par défaut utilisateur a faux !
 
         System.out.println("L'utilisateur a repondu : "+intrepUser);
@@ -154,7 +157,6 @@ public class ApplicationClient extends JDialog {
 
         }else{
             zoneMessage.setText("Mauvaise reponse");
-
         }
 /*
         try {

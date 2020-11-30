@@ -124,12 +124,16 @@ public class Connexion extends Thread {
 
                             // Dans le message de retour on maj les question ( pour enlever celle qui est posé la 0)
                             messageRetour.setLesQuestions(message.getLesQuestions());
-
+                            messageRetour.setScore(this.score);
                             this.oos.writeObject(messageRetour);
 
                         }else {
                             // Renvoyer un message au client avec les questions avec la question en moins
+                            this.score=message.getScore();
+
                             Message messageRetour = new Message("server","La fin de la partie ! ","FINPARTIE");
+                            messageRetour.setScore(this.score);
+
                             this.oos.writeObject(messageRetour);
                         }
 

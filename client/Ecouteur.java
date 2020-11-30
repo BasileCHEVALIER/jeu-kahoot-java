@@ -65,7 +65,7 @@ public class Ecouteur extends Thread {
 
                     // Permet d'afficher les messages du serveur
                     // To do : Pourquoi pas ajouter un switch case pour gerer les cas d'un maniere plus fine !
-                    zoneMessage.append(msg.getExpediteur()+" : "+msg.getMessage()+"\n");
+                    zoneMessage.setText(msg.getExpediteur()+" : "+msg.getMessage()+"\n");
 
                     // Permet le debug pour savoir ce qu'il se passe entre le serveur et le client !
                     System.out.println("---ECOUTEUR---");
@@ -76,6 +76,9 @@ public class Ecouteur extends Thread {
 
                     // On affiche une question à la fois
                     if(msg.getTypeMessage().compareTo("QUESTION")==0){
+
+                        buttonReponsePanel.setVisible(true);
+
 
                         System.out.println("LES QUESTIONS :"+msg.getLesQuestions());
 
@@ -111,7 +114,10 @@ public class Ecouteur extends Thread {
                         zoneMessage.setText(msg.getMessage());
                         zoneMessage.append("\n");
                         zoneMessage.append("Votre score est : "+msg.getScore());
+                        logPanel.setVisible(true);
                     }
+
+
 
 
                 }
