@@ -1,7 +1,8 @@
 # kahoot simple en java 
 
 @Copyright Gautier Masse 30 novembre 2020 La1  
-
+* Gestion de projet & bdd : Mariette Leleu 
+* Dev : Gautier Masse 
 ## Pourquoi ce projet 
 
 L'objectif est de decouvrir le principe de client-serveur en java avec des theads en java et des sockets.
