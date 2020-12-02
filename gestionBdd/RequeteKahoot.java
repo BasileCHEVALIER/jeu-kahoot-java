@@ -17,12 +17,12 @@ import java.util.List;
 public class RequeteKahoot {
 
     private static Connection connect;
-    //private static String url="jdbc:mysql://localhost:3306/kahoot2";
-    //private static String user = "gautier";
-    //private static String mdp = "26102000";
-    private static String url = "jdbc:mysql://localhost:3306/kahoot3";
+    private static String url="jdbc:mysql://localhost:3306/kahootctp";
+    private static String user = "root";
+    private static String mdp = "";
+    /*private static String url = "jdbc:mysql://localhost:3306/kahoot3";
     private static String user = "gautier";
-    private static String mdp = "26102000";
+    private static String mdp = "26102000";*/
 
     public RequeteKahoot() throws SQLException {
         connect = DriverManager.getConnection(url, user, mdp);
