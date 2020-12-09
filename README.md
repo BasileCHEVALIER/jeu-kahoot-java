@@ -3,10 +3,11 @@
 @Copyright Gautier Masse 30 novembre 2020 La1  
 * Gestion de projet & bdd : Mariette Leleu 
 * Dev : Gautier Masse 
+
+Pour voir notre code amélioré voir groupe 3, en effet il y a des mécaniques qui ont été ajouté : 
+
+
 ## Pourquoi ce projet 
-
-## Pour voir notre code amélioré voir groupe 3.
-
 L'objectif est de decouvrir le principe de client-serveur en java avec des theads en java et des sockets.
 En réalisant un projet très simpliste de questionnaire avec base de données, import de json.
 ## Comment utiliser l'application ? 
