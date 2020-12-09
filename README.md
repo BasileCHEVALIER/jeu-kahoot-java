@@ -4,7 +4,6 @@
 * Gestion de projet & bdd : Mariette Leleu 
 * Dev : Gautier Masse 
 
-Pour voir notre code amélioré voir groupe 3, en effet il y a des mécaniques qui ont été ajouté : 
 
 
 ## Pourquoi ce projet 
