@@ -5,6 +5,8 @@
 * Dev : Gautier Masse 
 ## Pourquoi ce projet 
 
+## Pour voir notre code amélioré voir groupe 3.
+
 L'objectif est de decouvrir le principe de client-serveur en java avec des theads en java et des sockets.
 En réalisant un projet très simpliste de questionnaire avec base de données, import de json.
 ## Comment utiliser l'application ? 
