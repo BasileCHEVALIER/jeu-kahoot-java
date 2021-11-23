@@ -25,7 +25,7 @@ La partie se lance lorsque au moins 2 personnes sont inscrits ou bien connectés
 Le code a été conçu pour faire des parties à 2. Si une troisième personne se connecte le serveur va lancer de lui même une nouvelle partie.
 * Dans votre ide faire en sorte de pouvoir lancer la classe ApplicationClient en mode "allow parallel run"
 ## Warning !
-* Si il manque des utilisateurs ils vont devoir attendre qu'une personne vienne jouer 
+* Si il manque des utilisateurs ils vont devoir attendre qu'une personne arrive jouer 
 
 ## Les améliorations ? 
 * Faire en sorte de pouvoir choisir le nombre de personnes dans la partie lors du lancement du serveur. 
